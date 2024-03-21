@@ -4,20 +4,20 @@ using System.Net.Sockets;
 using System.Text;
 
 
-namespace Server 
+namespace Server
 {
     // Test git comment
     // Socket Listener acts as a server and listens to the incoming
     // messages on the specified port and protocol.
-    public class SocketListener 
+    public class SocketListener
     {
-        public static int Main(String[] args) 
+        public static int Main(String[] args)
         {
             StartServer();
             return 0;
         }
 
-        public static void StartServer() 
+        public static void StartServer()
         {
             // Choose the port number for the server to listen on
             int port = 12345;
