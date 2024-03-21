@@ -6,6 +6,7 @@ using System.Text;
 
 namespace Server 
 {
+    // Test git comment
     // Socket Listener acts as a server and listens to the incoming
     // messages on the specified port and protocol.
     public class SocketListener 
@@ -13,6 +14,7 @@ namespace Server
         public static int Main(String[] args) 
         {
             StartServer();
+            Console.WriteLine("Hello World");
             return 0;
         }
 
