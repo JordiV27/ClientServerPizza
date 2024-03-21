@@ -49,7 +49,19 @@ namespace Client
         {
             string order = "";
             Console.WriteLine("Welcome to Pizza! Here you can order *drum roll* PIZZA!");
-            Console.WriteLine("Would you like a pre-made pizza (0) or a customizable pizza (1)?");
+
+            var pizza_option = new List<Tuple<int, string>>
+            {
+                Tuple.Create(1, "Custom Pizza"),
+                Tuple.Create(2, "Pre-made Pizza")
+            };
+
+            Console.WriteLine("To order a pizza, please select one of the following options:");
+            foreach (var p_opt in pizza_option)
+            {
+                Console.WriteLine("{0}) {1}", p_opt.Item1, p_opt.Item2);
+            }
+            /*Console.WriteLine("Would you like a pre-made pizza (0) or a customizable pizza (1)?");
             int opt1 = Convert.ToInt32(Console.ReadLine());
             if (opt1 == 0)
             {
@@ -58,7 +70,7 @@ namespace Client
             else if (opt1 == 1)
             {
                 order = getCustomPizza();
-            }
+            }*/
 
             return order;
         }
@@ -71,73 +83,37 @@ namespace Client
             return new Message(cp, pizza_order, date_time); 
         }
 
-        public static void StartClient() 
+        static void StartClient()
         {
-            byte[] bytes = new byte[1024];
+            // IP address and port of the server to connect to
+            string serverIp = "141.252.132.23"; // Replace this with the IP address of the server
+            int port = 12345;
 
-            try 
+            try
             {
-                // Connect to a Remote server
-                // Get Host IP Address that is used to establish a connection
-                // In this case, we get one IP address of localhost that is IP : 127.0.0.1
-                // If a host has multiple addresses, you will get a list of addresses
-                IPHostEntry host = Dns.GetHostEntry("localhost");
-                IPAddress ipAddress = host.AddressList[0];
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+                // Create a TCP client
+                TcpClient client = new TcpClient();
 
-                // Create a TCP/IP  socket.
-                Socket sender = new Socket(ipAddress.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
+                // Connect to the server
+                client.Connect(serverIp, port);
+                Console.WriteLine("Connected to server.");
 
-                // Connect the socket to the remote endpoint. Catch any errors.
-                try 
-                {
-                    // Connect to Remote EndPoint
-                    sender.Connect(remoteEP);
+                // Get the network stream for sending data
+                NetworkStream stream = client.GetStream();
 
-                    Console.WriteLine("Socket connected to {0}",
-                        sender.RemoteEndPoint.ToString());
+                // Send a message to the server
+                string message = "Hello from the client!";
+                byte[] data = Encoding.ASCII.GetBytes(message);
+                stream.Write(data, 0, data.Length);
+                Console.WriteLine("Message sent to server: " + message);
 
-                    // Encode the data string into a byte array.
-
-                    Console.WriteLine("Enter a message here: \n");
-                    
-                    string testMessage = Console.ReadLine();
-                    testMessage = testMessage + "<EOF>";
-
-
-                    byte[] msg = Encoding.ASCII.GetBytes(testMessage);
-
-                    // Send the data through the socket.
-                    int bytesSent = sender.Send(msg);
-
-                    // Receive the response from the remote device.
-                    int bytesRec = sender.Receive(bytes);
-                    Console.WriteLine("Echoed test = {0}",
-                        Encoding.ASCII.GetString(bytes, 0, bytesRec));
-
-                    // Release the socket.
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
-
-                }
-                catch (ArgumentNullException ane) 
-                {
-                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                }
-                catch (SocketException se) 
-                {
-                    Console.WriteLine("SocketException : {0}", se.ToString());
-                }
-                catch (Exception e) 
-                {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                }
-
+                // Close the stream and client when done
+                stream.Close();
+                client.Close();
             }
-            catch (Exception e) 
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine("An error occurred: " + ex.Message);
             }
         }
     }

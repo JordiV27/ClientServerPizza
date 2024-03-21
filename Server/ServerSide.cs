@@ -14,62 +14,43 @@ namespace Server
         public static int Main(String[] args) 
         {
             StartServer();
-            Console.WriteLine("Hello World");
             return 0;
         }
 
         public static void StartServer() 
         {
-            // Get Host IP Address that is used to establish a connection
-            // In this case, we get one IP address of localhost that is IP : 127.0.0.1
-            // If a host has multiple addresses, you will get a list of addresses
-            IPHostEntry host = Dns.GetHostEntry("localhost");
-            IPAddress ipAddress = host.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            // Choose the port number for the server to listen on
+            int port = 12345;
 
-            try 
+            try
             {
+                // Create a TCP listener
+                TcpListener listener = new TcpListener(IPAddress.Any, port);
+                listener.Start();
+                Console.WriteLine("Server started. Waiting for connections...");
 
-                // Create a Socket that will use Tcp protocol
-                Socket listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                // A Socket must be associated with an endpoint using the Bind method
-                listener.Bind(localEndPoint);
-                // Specify how many requests a Socket can listen before it gives Server busy response.
-                // We will listen 10 requests at a time
-                listener.Listen(10);
+                // Accept incoming client connections
+                TcpClient client = listener.AcceptTcpClient();
+                Console.WriteLine("Client connected.");
 
-                Console.WriteLine("Waiting for a connection...");
-                Socket handler = listener.Accept();
+                // Get the network stream for receiving data
+                NetworkStream stream = client.GetStream();
 
-                // Incoming data from the client.
-                string data = null;
-                byte[] bytes = null;
+                // Receive data from the client
+                byte[] data = new byte[1024]; // Adjust the buffer size as needed
+                int bytesRead = stream.Read(data, 0, data.Length);
+                string message = Encoding.ASCII.GetString(data, 0, bytesRead);
+                Console.WriteLine("Message received from client: " + message);
 
-                while (true) 
-                {
-                    bytes = new byte[1024];
-                    int bytesRec = handler.Receive(bytes);
-                    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                    if (data.IndexOf("<EOF>") > -1) 
-                    {
-                        break;
-                    }
-                }
-
-                Console.WriteLine("Text received : {0}", data);
-
-                byte[] msg = Encoding.ASCII.GetBytes(data);
-                handler.Send(msg);
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
+                // Close the stream and listener when done
+                stream.Close();
+                listener.Stop();
             }
-            catch (Exception e) 
+            catch (Exception ex)
             {
-                Console.WriteLine(e.ToString());
+                Console.WriteLine("An error occurred: " + ex.Message);
             }
 
-            Console.WriteLine("\n Press any key to continue...");
-            Console.ReadKey();
         }
     }
 }
