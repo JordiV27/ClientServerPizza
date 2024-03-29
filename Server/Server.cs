@@ -14,6 +14,7 @@ namespace Server
 
         private List<Order> orders;
         private const string IPADDRESS = "192.168.68.110";  //ALERT: use HOST IPv4 address here
+        //private const string IPADDRESS = "192.168.68.117";  //ALERT: use HOST IPv4 address here
 
         private const int TCP_PORT = 12345, HTTP_PORT = 54321;
 
@@ -113,6 +114,7 @@ namespace Server
 
         //in admin cmd execute following command                (change user params in add command to DEVICENAME\username)
         //netsh http add urlacl url=http://192.168.68.110:54321/ user=LENOVOPC\jordi listen=yes
+        //netsh http add urlacl url=http://192.168.68.110:54321/ user=LAPTOP-V2BOURCE\Yvonne listen=yes
         //netsh http delete urlacl url = http://192.168.68.110:54321/
         private void StartHttpServer()
         {

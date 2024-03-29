@@ -18,6 +18,7 @@ namespace Client
         {
             // IP address and port of the server to connect to
             string serverIp = "192.168.68.110"; // Replace this with the IPv4 address of the server
+            //string serverIp = "192.168.68.117"; // Replace this with the IPv4 address of the server
             int port = 12345;
 
             try
