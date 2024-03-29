@@ -9,7 +9,6 @@ namespace Server
     public class MainProgram {
         public static int Main(String[] args)
         {
-
             Server server = Server.getInstance();
             server.Start();
 
