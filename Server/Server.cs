@@ -113,6 +113,10 @@ namespace Server
 
 
         //in admin cmd execute following command                (change user params in add command to DEVICENAME\username)
+        //in admin cmd execute following command
+        //in netsh http add command change: 
+        //      url parameter:      your device_IPv4_address
+        //      user parameter:     your device_name\device_username 
         //netsh http add urlacl url=http://192.168.68.110:54321/ user=LENOVOPC\jordi listen=yes
         //netsh http add urlacl url=http://192.168.68.117:54321/ user=LAPTOP-V2BOURCE\Yvonne listen=yes
         //netsh http delete urlacl url = http://192.168.68.110:54321/
