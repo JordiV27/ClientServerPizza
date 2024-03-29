@@ -8,9 +8,15 @@ namespace Server
 {
     public class Pizza
     {
-        public Pizza() { }
-        private List<IIngredient> ingredients;
+       
+        public List<IIngredient> ingredients;
         private bool lactoseFree;
         private bool vegetarian;
+        private bool glutenFree;
+
+        public Pizza() 
+        { 
+            ingredients = new List<IIngredient>();
+        }
     }
 }
