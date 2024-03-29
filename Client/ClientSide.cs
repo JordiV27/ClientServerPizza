@@ -21,7 +21,7 @@ namespace Client
         static void StartClient()
         {
             // IP address and port of the server to connect to
-            string serverIp = "141.252.132.23"; // Replace this with the IP address of the server
+            string serverIp = "localhost"; // Replace this with the IP address of the server
             int port = 12345;
 
             try
