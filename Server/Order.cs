@@ -8,7 +8,13 @@ namespace Server
 {
     public class Order
     {
-        public Order() { }
+        private CustomerInfo _customer_info;
+        private List<Pizza> _pizzas;
+        public Order(List<Pizza> pizzas, CustomerInfo customer_info) 
+        { 
+            _pizzas = pizzas;
+            _customer_info = customer_info;
+        }
 
 
         public override string ToString()
