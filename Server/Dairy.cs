@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public interface IIngredient
+    public abstract class Dairy : IIngredient
     {
-        public void Accept(IVisitor visitor);    
+        public const bool lactose_free = false;
+        public abstract void Accept(IVisitor visitor);
     }
 }

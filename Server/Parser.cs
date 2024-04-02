@@ -52,7 +52,7 @@ namespace Server
                 
                 if (!int.TryParse(input_lines.Dequeue(), out num_toppings)) //Next line is not number of toppings
                 {
-                    throw new FormatException("Invalid message format on number_pizzas");
+                    throw new FormatException("Invalid message format on number toppings");
                     break;
                 }
                 for (int nt = 0; nt < num_toppings; nt++)

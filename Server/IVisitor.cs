@@ -8,6 +8,8 @@ namespace Server
 {
     public interface IVisitor
     {
-
+        public void Visit(Dairy dairy);
+        public void Visit(Meat meat);
+        public void Visit(Vegetable vegetable);
     }
 }
