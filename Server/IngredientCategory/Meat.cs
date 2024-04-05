@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.Visitor;
 
-namespace Server
+namespace Server.IngredientCategory
 {
     public abstract class Meat : IIngredient
     {
-
-        public const bool vegetarian = false;
-        public abstract void Accept(IVisitor visitor);
-        
+        public abstract bool Accept(IVisitor visitor);
+        public abstract override string ToString();
     }
 }

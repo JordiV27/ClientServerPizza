@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.Visitor;
 
-namespace Server
+namespace Server.IngredientCategory
 {
     public interface IIngredient
     {
-        public void Accept(IVisitor visitor);    
+        public bool Accept(IVisitor visitor);
     }
 }

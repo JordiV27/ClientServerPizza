@@ -4,88 +4,56 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using Server.IngredientCategory;
+using Server.Visitor;
 
 namespace Server
 {
     public class Pizza
     {
-        private string? type;
-        private string? bottom;
-        private string? sauce;
-        private string? cheese;
-        private List<string>? toppings;
+        private string _name;
+        private List<IIngredient> _toppings;
+
         public Pizza(PizzaBuilder builder)
         {
-            this.type = builder.type;
-            this.bottom = builder.bottom;
-            this.sauce = builder.sauce;
-            this.cheese = builder.cheese;
-            this.toppings = builder.toppings;
+            _name       = builder._name;
+            _toppings   = builder._toppings;
+        }
+
+        
+        public bool returnAllergen(IVisitor visitor) 
+        {
+            List<bool> free_of_allergen = new List<bool>(); //List of allergene flags, if one flag is false, then allergene of type visitor is present
+
+            if (_toppings.Count() > 0)
+            {
+                foreach (IIngredient topping in _toppings)
+                {
+                    bool result = topping.Accept(visitor);
+                    free_of_allergen.Add(result);
+                }
+                // If all free_of_allergen items is true, then allergen is not found -> return true
+                return free_of_allergen.All(flag => flag == true);
+            }
+
+            //No toppings: free of allergens -> return true
+            return true;
+             
+        }
+
+        public override string ToString()
+        {
+            string topping_string = "";
+            foreach (IIngredient topping in _toppings)
+            {
+                topping_string += Environment.NewLine + $" - {topping}";
+            }
+            string pizza_summary =
+                $"-------------{_name} Pizza-------------"  + Environment.NewLine +
+                 "Toppings: "                               + Environment.NewLine +
+                 topping_string                             + Environment.NewLine;
+
+            return pizza_summary;
         }
     }
-
-    public class PizzaBuilder 
-    {
-        //Still not certain, whether strings or classes should be used
-        public string? type;
-        public string? bottom;
-        public string? sauce;
-        public string? cheese;
-        public List<string>? toppings;
-
-        public PizzaBuilder()
-        {
-            //Cannot have implicit getters due to return type conflicts with custom setters
-            this.type = null;
-            this.bottom = null;
-            this.sauce = null;
-            this.toppings = null;
-        }
-
-        public PizzaBuilder set_type(string pizzaType)
-        {
-            this.type= pizzaType;
-            return this;
-        }
-
-        public PizzaBuilder set_bottom(string bottom)
-        { 
-            this.bottom= bottom;
-            return this;
-        }
-
-        public PizzaBuilder set_sauce(string sauce)
-        {
-            this.sauce= sauce;
-            return this;
-        }
-
-        public PizzaBuilder set_toppings(List<string> toppings)
-        {
-            this.toppings= toppings;
-            return this;
-        }
-
-        public Pizza Build()
-        { 
-            return new Pizza(this);
-        }
-    }
-
-    public class PizzaDirector
-    {
-        private PizzaBuilder _builder;
-        public PizzaDirector(PizzaBuilder builder)
-        {
-            _builder = builder;
-        }
-
-        //Could make more for each pre-made pizza
-        public Pizza Margherita()
-        {
-            return _builder.set_type("Margherita").set_bottom("Dough").set_sauce("Tomato Sauce").Build();
-        }
-
-    }
-
 }

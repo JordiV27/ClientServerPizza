@@ -24,9 +24,10 @@ namespace Server
         public override string ToString()
         {
             return
-                "Name: \t\t\t"                    + _name                 +Environment.NewLine +
-                "Address: \t\t"                 + _address              +Environment.NewLine +
-                "Postal code and city: \t"    + _postal_code_city     +Environment.NewLine;
+                "----------Customer Information----------"              + Environment.NewLine +
+                $"Name: \t\t\t{_name}"                                  + Environment.NewLine +
+                $"Address: \t\t{_address}"                              + Environment.NewLine +
+                $"Postal code and city: \t{_postal_code_city}"          + Environment.NewLine;
         }
     }
 }

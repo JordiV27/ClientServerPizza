@@ -1,36 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Server.IngredientCategory;
+using Server.Ingredient;
+using Server.Ingredients;
 
 namespace Server
 {
     public class Menu
     {
-        private PizzaBuilder _pb;
-        private PizzaDirector _pd;
-
-        public static Dictionary<string, Pizza> menu = new Dictionary<string, Pizza>();
+        public static Dictionary<string, IIngredient> _ingredients; 
 
 
         public Menu() 
         { 
-            _pb = new PizzaBuilder();
-            _pd = new PizzaDirector(_pb);
-
-            FillMenu();
+            _ingredients = new Dictionary<string, IIngredient>();
+            FillIngredients();
         }
 
-        private void FillMenu()
+        //Keys are regex: ignore all spaces and newline characters, but find "mozzarella", "mushroom" etc.
+        private void FillIngredients() 
         {
-            menu.Add("Margherita", _pd.Margherita());
-            
+            _ingredients.Add("[^ \n]*mozzarella", new Mozzarella());
+            _ingredients.Add("[^ \n]*mushroom", new Mushroom());
+            _ingredients.Add("[^ \n]*onion", new Onion());
+            _ingredients.Add("[^ \n]*salami", new Salami());
+            _ingredients.Add("[^ \n]*tuna", new Tuna());
         }
-
-        public static Dictionary<string , Pizza> GetMenu() 
+        public Dictionary<string, IIngredient> GetIngredients()
         {
-            return menu;
+            return _ingredients;
         }
     }
 }

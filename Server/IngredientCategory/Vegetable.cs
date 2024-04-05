@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.Visitor;
 
-namespace Server
+namespace Server.IngredientCategory
 {
     public abstract class Vegetable : IIngredient
     {
-        public const bool child_friendly = false;
-        public abstract void Accept(IVisitor visitor);
-        
+        public abstract bool Accept(IVisitor visitor);
+        public abstract override string ToString(); 
     }
 }
