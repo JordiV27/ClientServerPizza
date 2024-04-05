@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 
 
@@ -77,9 +78,27 @@ namespace Server
         {
             try 
             {
+                byte[] aesByteKey = new byte[] { 0xAA, 0xBB, 0xCC, 0xDD,
+                              0xEE, 0xFF, 0x00, 0x11,
+                              0x22, 0x33, 0x44, 0x55,
+                              0x66, 0x77, 0x88, 0x99,
+                              0x11, 0x22, 0x33, 0x44,
+                              0x55, 0x66, 0x77, 0x88,
+                              0x99, 0xAA, 0xBB, 0xCC,
+                              0xDD, 0xEE, 0xFF, 0x00 }; ;
+                byte[] aesByteIV = new byte[] { 0xAA, 0xBB, 0xCC, 0xDD,
+                              0xEE, 0xFF, 0x00, 0x11,
+                              0x22, 0x33, 0x44, 0x55,
+                              0x66, 0x77, 0x88, 0x99 };
+
+
+                Aes aes = Aes.Create();
+                aes.Key = aesByteKey;
+                aes.IV = aesByteIV;
                 //Message from client
-                string orderMsg;
+                //string orderMsg;
                 // Prepare data stream
+                byte[] encoded_data;
                 using (NetworkStream stream = client.GetStream())
                 {
                     // Messages may be longer than 1024 bytes, problem solved using MemoryStream
@@ -94,12 +113,15 @@ namespace Server
                             ms.Write(buffer, 0, numBytesRead);
                         }
                         //ALERT:  MAKE SURE THE ENCODING ON CLIENT APPLICATION IS ALSO ASCII
-                        orderMsg = Encoding.ASCII.GetString(ms.ToArray(), 0, (int)ms.Length);
+                        encoded_data = ms.ToArray();
+                        //orderMsg = Encoding.ASCII.GetString(ms.ToArray(), 0, (int)ms.Length);
                     }
                 }
-                
+                string orderMsg = AES_Decrypt(encoded_data, aes.Key, aes.IV);
+
                 Parser parser = new Parser();
                 Order order = parser.parseMessage(orderMsg);
+                order.checkAllergens();
                 this.orders.Add(order);
                 DisplayOrders();
 
@@ -163,6 +185,7 @@ namespace Server
 
                 Parser parser = new Parser();   
                 Order order = parser.parseMessage(orderMsg);
+                order.checkAllergens();
                 this.orders.Add(order);
                 DisplayOrders();
             }
@@ -179,6 +202,86 @@ namespace Server
                 Console.WriteLine();
             }
         }
-    
+
+        static byte[] AES_Encrypt(string data, byte[] Key, byte[] IV)
+        {
+            if (data == null || data.Length <= 0)
+                throw new ArgumentNullException("plainText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+            byte[] encrypted;
+
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                // Create an encryptor to perform the stream transform.
+                ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for encryption.
+                using (MemoryStream msEncrypt = new MemoryStream())
+                {
+                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                        {
+                            //Write all data to the stream.
+                            swEncrypt.Write(data);
+                        }
+                        encrypted = msEncrypt.ToArray();
+                    }
+                }
+            }
+
+            return encrypted;
+        }
+        static string AES_Decrypt(byte[] cipher_text, byte[] Key, byte[] IV)
+        {
+            if (cipher_text == null || cipher_text.Length <= 0)
+                throw new ArgumentNullException("cipherText");
+            if (Key == null || Key.Length <= 0)
+                throw new ArgumentNullException("Key");
+            if (IV == null || IV.Length <= 0)
+                throw new ArgumentNullException("IV");
+
+            // Declare the string used to hold
+            // the decrypted text.
+            string plaintext = null;
+
+            // Create an Aes object
+            // with the specified key and IV.
+            using (Aes aesAlg = Aes.Create())
+            {
+                aesAlg.Key = Key;
+                aesAlg.IV = IV;
+
+                // Create a decryptor to perform the stream transform.
+                ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
+
+                // Create the streams used for decryption.
+                using (MemoryStream msDecrypt = new MemoryStream(cipher_text))
+                {
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
+                        {
+
+                            // Read the decrypted bytes from the decrypting stream
+                            // and place them in a string.
+                            plaintext = srDecrypt.ReadToEnd();
+                        }
+                    }
+                }
+            }
+
+            return plaintext;
+        }
+
+
+
+
     }
 }
