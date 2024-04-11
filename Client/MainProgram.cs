@@ -9,7 +9,9 @@ namespace Client
 {
     public class MainProgram
     {
-        private const string IPADDRESS = "192.168.68.110";
+        //private const string IPADDRESS = "192.168.68.110";
+        private const string IPADDRESS = "141.252.132.149"; //IPv4 LAPTOP school
+        //private const string IPADDRESS = "192.168.68.145";
         private const int TCP_PORT = 12345, HTTPS_PORT = 54321;
 
         public async static Task Main(String[] args)

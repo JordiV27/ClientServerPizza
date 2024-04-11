@@ -16,7 +16,9 @@ namespace Server
         private static Server instance;
 
         private List<Order> orders;
-        private const string IPADDRESS = "192.168.68.110";  //ALERT: use HOST IPv4 address here
+        //private const string IPADDRESS = "192.168.68.110";  //ALERT: use HOST IPv4 address here
+        private const string IPADDRESS = "141.252.132.149";  //LAPTOP IPv4 schoool
+        //private const string IPADDRESS = "192.168.68.145";  //LAPTOP IPv4
         //private const string IPADDRESS = "192.168.68.117";  //ALERT: use HOST IPv4 address here
 
         private const int TCP_PORT = 12345, HTTP_PORT = 54321;
@@ -39,9 +41,10 @@ namespace Server
         {
             Task tcpServer = StartTCPServerAsync();
             Task httpServer = StartHttpServerAsync();
-            
-            
-            await Task.WhenAll(httpServer, tcpServer);
+
+            tcpServer.Wait();
+            httpServer.Wait();
+            //await Task.WhenAll(httpServer, tcpServer);
         }
 
         private async Task StartTCPServerAsync()
@@ -142,8 +145,6 @@ namespace Server
                     pizzaOrder.checkAllergens();
                     this.orders.Add(pizzaOrder);
                     DisplayOrders();
-
-                    Console.WriteLine(pizzaOrder.ToString());
 
                     string response = pizzaOrder.ToString(); 
                     byte[] encryptedResponse = EncryptData(response, aesKey, iv);
