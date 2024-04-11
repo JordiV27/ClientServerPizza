@@ -15,7 +15,8 @@ namespace Server
 
         private List<Order> orders;
 
-        private const string IPADDRESS = "192.168.68.110";  //ALERT: use HOST IPv4 address here
+        //private const string IPADDRESS = "192.168.68.110";  //ALERT: use HOST IPv4 address here
+        private const string IPADDRESS = "192.168.68.145"; //LAPTOP IPv4
         //private const string IPADDRESS = "192.168.68.117";  //ALERT: use HOST IPv4 address here
 
 
@@ -141,8 +142,8 @@ namespace Server
         //      url parameter:      your device_IPv4_address
         //      user parameter:     your device_name\device_username 
         //netsh http add urlacl url=http://192.168.68.110:54321/ user=LENOVOPC\jordi listen=yes
-        //netsh http add urlacl url=http://192.168.68.117:54321/ user=LAPTOP-V2BOURCE\Yvonne listen=yes
-        //netsh http delete urlacl url = http://192.168.68.110:54321/
+        //netsh http add urlacl url=http://192.168.68.145:54321/ user=HPJORDI\jordi listen=yes
+        //netsh http delete urlacl url=http://192.168.68.110:54321/
         private void StartHttpServer()
         {
             string url = "http://" + IPADDRESS + ":" + HTTP_PORT.ToString() + "/";
